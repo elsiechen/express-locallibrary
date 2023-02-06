@@ -23,7 +23,8 @@ app.use(helmet());
 const mongoose = require('mongoose');
 
 // Set up default mongoose connection
-const mongoDB = "mongodb+srv://elsie915Atlas:myCode2013@cluster0.lc6m9st.mongodb.net/local_library?retryWrites=true&w=majority";
+const dev_db_url = "mongodb+srv://elsie915Atlas:myCode2013@cluster0.lc6m9st.mongodb.net/local_library?retryWrites=true&w=majority";
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
 mongoose.connect(mongoDB, {useNewUrlParser: true,
 useUnifiedTopology: true});
