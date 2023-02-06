@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}, a basic Express website.
+
+  h1 Dynamic content 
+
+  if error 
+    p Error getting dynamic content.
+  else 
+    p The library has the following record counts: 
+    
+    ul
+      li #[em Books:] !{data.book_count}
+      li #[em Copies:] !{data.book_instance_count}
+      li #[em Copies available] !{data.book_instance_available_count}
+      li #[em Authors:] !{data.author_count}
+      li #[em Genres:] !{data.author_count} 

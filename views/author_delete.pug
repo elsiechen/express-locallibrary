@@ -1,0 +1,26 @@
+extends layout 
+block content 
+    h1 #{title}: #{author.name} 
+    p #{author.date_of_birth_yyyy_mm_dd}~ #{author.date_of_death_yyyy_mm_dd}
+    // there's associated books,state books must be deleted before deleting
+    // the author, then list all associated books
+    if author_books.length 
+        p #[strong Delete the following books before deleting this author.]
+
+        div(style='margin-left:20px;margin-top:20px')
+            h4 Books 
+                dl 
+                    each val in author_books 
+                        dt 
+                            a(href=val.url) #{val.title}
+                        dd  #{val.summary}
+    else 
+        // display confirmation prompt
+        p Do you really want to delete this Author?
+        // if Delete button is clicked, the hidden authorid will be sent
+        // to server in POST request and author's record will be deleted
+        form(method='POST', action='')
+            div.form-group
+                input#authorid.form-control(type='hidden', name='authorid',
+                    required='true', value=author._id)
+            button.btn.btn-primary(type='submit') Delete

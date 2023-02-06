@@ -1,0 +1,66 @@
+extends layout 
+block content 
+    h1=title 
+
+    form(method='POST',action='')
+        div.form-group
+            label(for='book') Book: 
+            select#book.form-control(type='select',placeholder='Select a book',
+                required='true', name='book')
+                // mix pug with JavaScript code staring with '-'
+                // pug supports block unbuffered code
+                -
+                    books.sort((a,b)=>{
+                        let bookA = a.title.toUpperCase();
+                        let bookB = b.title.toUpperCase();
+                        return (bookA < bookB)?-1:(bookA > bookB)?1:0;
+                    }); 
+                for val in books 
+                    if bookinstance 
+                        // post route
+                        // determine what book to choose by comparing id of current
+                        // book option with id of user's entered book 
+                        option(value=val._id,
+                            selected=(val._id.toString()===selected_book.toString())?true:false) #{val.title}
+                    else 
+                        // get route
+                        option(value=val._id)  #{val.title}
+
+        div.form-group 
+            label(for='imprint') Imprint: 
+            input#imprint.form-control(type='text',placeholder='Publisher and date information',
+                required='true',name='imprint',
+                value=(bookinstance===undefined?'':bookinstance.imprint))
+
+        div.form-group 
+            label(for='due_back') Date when book is available: 
+            input#due_back.form-control(type='date',required='true',name='due_back',
+                value=(bookinstance===undefined?'':bookinstance.due_back_yyyy_mm_dd))
+
+        //- div.form-group
+        //-     label(for='status') Status:
+        //-     select#status.form-control(type='select', required='true', name='status',
+        //-         placeholder='Select a status')
+        //-         option(value='Maintenance') Maintenance
+        //-         option(value='Available') Available
+        //-         option(value='Loaned') Loaned
+        //-         option(value='Reserved') Reserved
+        
+        div.form-group
+            label(for='status') Status:
+            select#status.form-control(type='select', required='true', name='status',
+                placeholder='Select a status')
+                // remember user's selected book status
+                option(value='Maintenance',selected=(bookinstance===undefined || bookinstance.status!='Maintenance'?false:true)) Maintenance
+                option(value='Available', selected=(bookinstance===undefined || bookinstance.status!='Available'?false:true)) Available 
+                option(value='Loaned', selected=(bookinstance===undefined || bookinstance.status!='Loaned'?false:true)) Loaned
+                option(value='Reserved', selected=(bookinstance===undefined || bookinstance.status!='Reserved'?false:true)) Reserved
+
+        button.btn.btn-primary(type='submit') Submit
+
+        if errors 
+            ul 
+                for error in errors 
+                    li!= error.msg
+                
+

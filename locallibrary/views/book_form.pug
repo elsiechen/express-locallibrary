@@ -1,0 +1,66 @@
+extends layout 
+block content 
+    h1 #{title}
+
+    form(method='POST', action='')
+        div.form-group
+            label(for='title') Title: 
+            input#title.form-control(type='text', placeholder='Name of book',
+                required='true',name='title', 
+                value=(book===undefined?'':book.title))
+        div.form-group
+            label(for='author') Author: 
+            select#author.form-control(placeholder='Select author',
+                required='true', name='author')
+                // mix pug with javascript code starting with '-' hyphen
+                // pug supports block unbuffered code
+                - 
+                    authors.sort((a,b)=>{
+                        // negative value of compare function means a should
+                        // be kept before b in sorted result; positive means
+                        // a kept after b; 0 means order remains the same
+                        let textA = a.family_name.toUpperCase();
+                        let textB = b.family_name.toUpperCase();
+                        return (textA < textB)?-1:(textA > textB)?1:0; 
+                    });
+                // we can't just use '- authors.sort()' because we should compare
+                // array of author objects by 'property' instead of object
+
+                for val in authors 
+                    if book 
+                        // post route
+                        // we determine what author to select by comparing id of current
+                        // author option with id entered by user(passed in by book variable)
+                        // author's id is type of Schema.Types.ObjectId, we must convert
+                        // them to string to compare them
+                        option(value=val._id, 
+                            selected=(val._id.toString()===book.author._id.toString()?
+                            true:false))  #{val.name}
+                    else 
+                        // get route
+                        option(value=val._id) #{val.name} 
+        div.form-group
+            label(for='summary') Summary: 
+            textarea#summary.form-control(type='textarea', placeholder='Summary of book',
+                required='true',name='summary', rows='4') #{book===undefined?'':book.summary}
+        div.form-group
+            label(for='isbn') ISBN: 
+            input#isbn.form-control(type='text', placeholder='ISBN13',
+                required='true',name='isbn', 
+                value=(book===undefined?'':book.isbn))
+        div.form-group
+            label Genre: 
+            div 
+                for val in genres 
+                    div(style='display: inline; padding-right:10px')
+                        input.checkbox-input(type='checkbox', name='genre',
+                            id=val._id, value=val._id, checked=val.checked)
+                        label(for=val._id)  #{val.name}
+        button.btn.btn-primary(type='submit') Submit
+
+        if errors 
+            ul 
+                for error in errors
+                    li!=error.msg
+
+             
